@@ -588,8 +588,8 @@ const AdminView = ({ trip, onUpdate }) => {
   const editPerson = (p) => { setForm({...p}); setEditingPerson(p.id); };
   const savePerson = () => {
     const u = {...trip};
-    if (editingPerson === 'new') u.people = [...u.people, form];
-    else u.people = u.people.map(p => p.id === form.id ? form : p);
+    if (editingPerson === 'new') u.people = [...(u.people || []), form];
+    else u.people = (u.people || []).map(p => p.id === form.id ? form : p);
     onUpdate(u);
     setEditingPerson(null);
   };
