@@ -634,7 +634,7 @@ const AdminView = ({ trip, onUpdate }) => {
     onUpdate({...trip, localSpots: (trip.localSpots || []).filter(s => s.id !== id)});
   };
 
-  const allGroceries = trip.people.flatMap(p => (p.groceryRequests || []).map(item => ({ item, person: p.name })));
+  const allGroceries = (trip.people || []).flatMap(p => (p.groceryRequests || []).map(item => ({ item, person: p.name })));
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
