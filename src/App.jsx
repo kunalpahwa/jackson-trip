@@ -195,6 +195,7 @@ const PersonView = ({ person, trip, onUpdate }) => {
   const [editing, setEditing] = useState(null);
   const [editData, setEditData] = useState({});
   const [grocery, setGrocery] = useState('');
+  // eslint-disable-next-line no-unused-vars
   const housing = trip.housing.find(h => h.id === person.housingId);
 
   const startEdit = (type) => {
