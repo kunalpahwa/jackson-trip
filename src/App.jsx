@@ -671,13 +671,13 @@ const AdminView = ({ trip, onUpdate }) => {
         {/* People Section */}
         <section>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">People ({trip.people.length})</h2>
+            <h2 className="text-xl font-bold">People ({(trip.people || []).length})</h2>
             <button onClick={addPerson} className="bg-purple-600 hover:bg-purple-500 px-4 py-2 rounded text-sm">+ Add Person</button>
           </div>
           <div className="grid md:grid-cols-2 gap-4">
             {(trip.people || []).map(p => <PersonCard key={p.id} person={p} trip={trip} onEdit={editPerson} onDelete={deletePerson} onCopyLink={() => { setCopied(true); setTimeout(() => setCopied(false), 2000); }} />)}
           </div>
-          {trip.people.length === 0 && <div className="text-gray-500 italic text-center py-8 bg-gray-800 rounded-lg">No people added yet</div>}
+          {(trip.people || []).length === 0 && <div className="text-gray-500 italic text-center py-8 bg-gray-800 rounded-lg">No people added yet</div>}
           {copied && <div className="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg">✓ Link copied!</div>}
         </section>
 
