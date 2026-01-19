@@ -380,11 +380,18 @@ const PersonView = ({ person, trip, onUpdate }) => {
                     </div>
                   )}
                   
-                  {h.websiteUrl && (
-                    <a href={h.websiteUrl} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-blue-400 hover:text-blue-300 text-sm">
-                      🔗 View Property →
-                    </a>
-                  )}
+                  <div className="flex gap-3 mt-3">
+                    {h.websiteUrl && (
+                      <a href={h.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 text-sm">
+                        🔗 Property →
+                      </a>
+                    )}
+                    {h.mapsUrl && (
+                      <a href={h.mapsUrl} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 text-sm">
+                        📍 Directions →
+                      </a>
+                    )}
+                  </div>
                   
                   {h.notes && <div className="text-gray-400 text-sm mt-2">{h.notes}</div>}
                 </div>
@@ -588,8 +595,8 @@ const AdminView = ({ trip, onUpdate }) => {
   const editPerson = (p) => { setForm({...p}); setEditingPerson(p.id); };
   const savePerson = () => {
     const u = {...trip};
-    if (editingPerson === 'new') u.people = [...(u.people || []), form];
-    else u.people = (u.people || []).map(p => p.id === form.id ? form : p);
+    if (editingPerson === 'new') u.people = [...u.people, form];
+    else u.people = u.people.map(p => p.id === form.id ? form : p);
     onUpdate(u);
     setEditingPerson(null);
   };
@@ -723,11 +730,18 @@ const AdminView = ({ trip, onUpdate }) => {
                     </div>
                   )}
                   
-                  {h.websiteUrl && (
-                    <a href={h.websiteUrl} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-blue-400 hover:text-blue-300 text-sm">
-                      🔗 View Property →
-                    </a>
-                  )}
+                  <div className="flex gap-3 mt-3">
+                    {h.websiteUrl && (
+                      <a href={h.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 text-sm">
+                        🔗 Property →
+                      </a>
+                    )}
+                    {h.mapsUrl && (
+                      <a href={h.mapsUrl} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 text-sm">
+                        📍 Directions →
+                      </a>
+                    )}
+                  </div>
                   
                   {h.notes && <div className="text-gray-400 text-sm mt-2">{h.notes}</div>}
                 </div>
@@ -935,6 +949,10 @@ const AdminView = ({ trip, onUpdate }) => {
               <div>
                 <label className="block text-xs text-gray-400 mb-1">Property Website</label>
                 <input type="text" value={form.websiteUrl || ''} onChange={e => setForm({...form, websiteUrl: e.target.value})} placeholder="https://..." className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-white" />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">Google Maps URL</label>
+                <input type="text" value={form.mapsUrl || ''} onChange={e => setForm({...form, mapsUrl: e.target.value})} placeholder="https://maps.google.com/..." className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-white" />
               </div>
               <div>
                 <label className="block text-xs text-gray-400 mb-1">Notes</label>
