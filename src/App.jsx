@@ -195,7 +195,6 @@ const PersonView = ({ person, trip, onUpdate }) => {
   const [editing, setEditing] = useState(null);
   const [editData, setEditData] = useState({});
   const [grocery, setGrocery] = useState('');
-  // eslint-disable-next-line no-unused-vars
   const housing = trip.housing.find(h => h.id === person.housingId);
 
   const startEdit = (type) => {
@@ -280,7 +279,12 @@ const PersonView = ({ person, trip, onUpdate }) => {
             {/* Others' flights */}
             {trip.people.filter(p => p.id !== person.id).map(p => (
               <div key={p.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                <div className="text-white font-bold mb-2">{p.name}</div>
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <div className="text-white font-bold">{p.name}</div>
+                    {p.contact?.phone && <div className="text-sm text-gray-400">📱 {p.contact.phone}</div>}
+                  </div>
+                </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-gray-900 rounded p-2">
                     <div className="text-xs text-gray-400">IN → JAC</div>
@@ -372,6 +376,23 @@ const PersonView = ({ person, trip, onUpdate }) => {
             ) : <button onClick={() => startEdit('contact')} className="text-blue-400">+ Add contact info</button>}
           </div>
         </section>
+
+        {/* Group Contacts */}
+        {trip.people.filter(p => p.id !== person.id && p.contact?.phone).length > 0 && (
+          <section>
+            <h2 className="text-lg font-semibold mb-3 text-gray-300">Group Contacts</h2>
+            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+              <div className="space-y-2">
+                {trip.people.filter(p => p.id !== person.id && p.contact?.phone).map(p => (
+                  <div key={p.id} className="flex justify-between items-center">
+                    <span className="text-white">{p.name}</span>
+                    <a href={`tel:${p.contact.phone.replace(/\D/g, '')}`} className="text-blue-400">📱 {p.contact.phone}</a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* 5. Meetup Spot */}
         {trip.sharedInfo?.meetingSpot && (
