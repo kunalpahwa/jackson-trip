@@ -1,8 +1,36 @@
 import { useState, useEffect } from 'react';
 
-const STORAGE_KEY = 'jackson-trip-2026';
-const saveData = async (data) => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { console.error('Save failed:', e); } };
-const loadData = async () => { try { const result = localStorage.getItem(STORAGE_KEY); return result ? JSON.parse(result) : null; } catch (e) { return null; } };
+const SUPABASE_URL = 'https://ocxbuqbwwsymxspqguxf.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9jeGJ1cWJ3d3N5bXhzcHFndXhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3OTczODMsImV4cCI6MjA4NDM3MzM4M30.skhs6tUZMwrtMREePmaEndeN6-QJlUFY7uvfDz8k3hM';
+
+const saveData = async (data) => {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/trips?id=eq.jackson-2026`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ data, updated_at: new Date().toISOString() })
+    });
+  } catch (e) { console.error('Save failed:', e); }
+};
+
+const loadData = async () => {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/trips?id=eq.jackson-2026&select=data`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    });
+    const rows = await res.json();
+    return rows[0]?.data || null;
+  } catch (e) { return null; }
+};
+
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
 
