@@ -244,7 +244,7 @@ const PersonView = ({ person, trip, onUpdate }) => {
   const removeGrocery = (i) => onUpdate({...person, groceryRequests: person.groceryRequests.filter((_, idx) => idx !== i)});
 
   // All groceries from all people
-  const allGroceries = trip.people.flatMap(p => (p.groceryRequests || []).map((item, idx) => ({ item, personName: p.name, personId: p.id, idx })));
+  const allGroceries = (trip.people || []).flatMap(p => (p.groceryRequests || []).map((item, idx) => ({ item, personName: p.name, personId: p.id, idx })));
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -306,7 +306,7 @@ const PersonView = ({ person, trip, onUpdate }) => {
             </div>
             
             {/* Others' flights */}
-            {trip.people.filter(p => p.id !== person.id).map(p => (
+            {(trip.people || []).filter(p => p.id !== person.id).map(p => (
               <div key={p.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
                 <div className="flex justify-between items-start mb-2">
                   <div>
@@ -344,7 +344,7 @@ const PersonView = ({ person, trip, onUpdate }) => {
           <h2 className="text-lg font-semibold mb-3 text-gray-300">Housing</h2>
           <div className="space-y-3">
             {trip.housing.map(h => {
-              const residents = trip.people.filter(p => p.housingId === h.id);
+              const residents = (trip.people || []).filter(p => p.housingId === h.id);
               const isYours = h.id === person.housingId;
               const houseVehicles = (trip.vehicles || []).filter(v => v.housingId === h.id);
               return (
@@ -407,12 +407,12 @@ const PersonView = ({ person, trip, onUpdate }) => {
         </section>
 
         {/* Group Contacts */}
-        {trip.people.filter(p => p.id !== person.id && p.contact?.phone).length > 0 && (
+        {(trip.people || []).filter(p => p.id !== person.id && p.contact?.phone).length > 0 && (
           <section>
             <h2 className="text-lg font-semibold mb-3 text-gray-300">Group Contacts</h2>
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
               <div className="space-y-2">
-                {trip.people.filter(p => p.id !== person.id && p.contact?.phone).map(p => (
+                {(trip.people || []).filter(p => p.id !== person.id && p.contact?.phone).map(p => (
                   <div key={p.id} className="flex justify-between items-center">
                     <span className="text-white">{p.name}</span>
                     <a href={`tel:${p.contact.phone.replace(/\D/g, '')}`} className="text-blue-400">📱 {p.contact.phone}</a>
@@ -593,7 +593,7 @@ const AdminView = ({ trip, onUpdate }) => {
     onUpdate(u);
     setEditingPerson(null);
   };
-  const deletePerson = (id) => { onUpdate({...trip, people: trip.people.filter(p => p.id !== id)}); };
+  const deletePerson = (id) => { onUpdate({...trip, people: (trip.people || []).filter(p => p.id !== id)}); };
 
   const editHousing = (h) => { setForm({...h}); setEditingHousing(h.id); };
   const saveHousing = () => { onUpdate({...trip, housing: trip.housing.map(h => h.id === form.id ? form : h)}); setEditingHousing(null); };
@@ -675,7 +675,7 @@ const AdminView = ({ trip, onUpdate }) => {
             <button onClick={addPerson} className="bg-purple-600 hover:bg-purple-500 px-4 py-2 rounded text-sm">+ Add Person</button>
           </div>
           <div className="grid md:grid-cols-2 gap-4">
-            {trip.people.map(p => <PersonCard key={p.id} person={p} trip={trip} onEdit={editPerson} onDelete={deletePerson} onCopyLink={() => { setCopied(true); setTimeout(() => setCopied(false), 2000); }} />)}
+            {(trip.people || []).map(p => <PersonCard key={p.id} person={p} trip={trip} onEdit={editPerson} onDelete={deletePerson} onCopyLink={() => { setCopied(true); setTimeout(() => setCopied(false), 2000); }} />)}
           </div>
           {trip.people.length === 0 && <div className="text-gray-500 italic text-center py-8 bg-gray-800 rounded-lg">No people added yet</div>}
           {copied && <div className="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg">✓ Link copied!</div>}
@@ -686,7 +686,7 @@ const AdminView = ({ trip, onUpdate }) => {
           <h2 className="text-xl font-bold mb-4">Housing</h2>
           <div className="grid md:grid-cols-2 gap-4">
             {trip.housing.map(h => {
-              const residents = trip.people.filter(p => p.housingId === h.id);
+              const residents = (trip.people || []).filter(p => p.housingId === h.id);
               const houseVehicles = (trip.vehicles || []).filter(v => v.housingId === h.id);
               return (
                 <div key={h.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
@@ -1208,15 +1208,15 @@ export default function App() {
   }, []);
 
   const updateTrip = async (t) => { setTrip(t); await saveData(t); };
-  const updatePerson = async (p) => { const t = {...trip, people: trip.people.map(x => x.id === p.id ? p : x)}; await updateTrip(t); };
+  const updatePerson = async (p) => { const t = {...trip, people: (trip.people || []).map(x => x.id === p.id ? p : x)}; await updateTrip(t); };
 
   if (loading) return <div className="min-h-screen bg-gray-900 flex items-center justify-center"><div className="text-white text-xl">Loading...</div></div>;
 
   if (view !== 'admin') {
     // Look up by slug or ID
     const person = view.startsWith('slug:') 
-      ? trip.people.find(p => p.slug === view.slice(5))
-      : trip.people.find(p => p.id === view);
+      ? (trip.people || []).find(p => p.slug === view.slice(5))
+      : (trip.people || []).find(p => p.id === view);
     if (!person) {
       return (
         <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
